@@ -2,10 +2,12 @@ const Event = require("../../models/event");
 const User = require("../../models/event");
 const { dateToString } = require("../../helpers/date");
 
-const transformEvent = (event) => {
+const transformEvent = async (event) => {
+  // console.log("EVENT:", event._doc);
+  const thisCreator = await findUser(event._doc.creator);
   return {
     ...event._doc,
-    creator: findUser.bind(this, event._doc.creator),
+    creator: thisCreator,
     date: dateToString(event._doc.date),
   };
 };
@@ -44,7 +46,7 @@ const findUser = async (userId) => {
   console.log("HERE:", `findUser called with ${userId}`);
   try {
     const foundUser = await User.findById(userId);
-    console.log("CREATOR HERE", `${foundUser}`);
+    // console.log("CREATOR HERE", `${foundUser}`);
     return {
       ...foundUser._doc,
       createdEvents: findEvents.bind(this, foundUser._doc.createdEvents),
